@@ -13,6 +13,7 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_groq import ChatGroq
 from langchain_classic.chains import RetrievalQA
 from langchain_core.prompts import PromptTemplate
+from langchain_core.messages import HumanMessage
 
 
 # ==========================================
@@ -54,6 +55,13 @@ if "score" not in st.session_state:
 if "question_count" not in st.session_state:
     st.session_state.question_count = 0
 
+# NEW STATES
+
+if "current_question" not in st.session_state:
+    st.session_state.current_question = None
+
+if "interview_started" not in st.session_state:
+    st.session_state.interview_started = False
 
 # ==========================================
 # SIDEBAR CONFIGURATION
@@ -235,6 +243,73 @@ Answer:
     return qa_chain
 
 
+def get_default_question():
+
+    defaults = {
+        "HR Round": "Tell me about a time you handled a difficult situation at work.",
+        "Technical Round": "Explain how you would solve a technical problem using best practices.",
+        "System Design Round": "How would you design a scalable, fault-tolerant system for real-time data processing?",
+        "Behavioral Round": "Describe a project where you had to adapt to a major change in requirements.",
+        "Aptitude Round": "If five people can finish a task in three days, how many days would ten people need to finish the same task?"
+    }
+
+    return defaults.get(interview_round, "Tell me about your most important professional achievement.")
+
+
+def generate_interview_question():
+
+    prompt = f"""
+You are an interview coach.
+Generate one concise, interview-style question for the following round:
+{interview_round}
+
+Return only the question text.
+"""
+
+    try:
+        response = llm.generate([[HumanMessage(content=prompt)]])
+        question = response.generations[0][0].text.strip()
+
+        if question:
+            return question
+    except Exception:
+        pass
+
+    return get_default_question()
+
+
+def evaluate_answer(question, answer):
+
+    if not answer:
+        return "Please submit an answer to receive evaluation."
+
+    prompt = f"""
+You are an interview evaluator.
+The interview question was:
+{question}
+
+The candidate answered:
+{answer}
+
+Provide a short evaluation with:
+- strengths
+- areas for improvement
+- score out of 10
+Return only markdown-formatted text.
+"""
+
+    try:
+        response = llm.generate([[HumanMessage(content=prompt)]])
+        evaluation = response.generations[0][0].text.strip()
+
+        if evaluation:
+            return evaluation
+    except Exception:
+        pass
+
+    return "I couldn't evaluate the answer at this time. Please try again later."
+
+
 # ==========================================
 # BUILD KNOWLEDGE BASE
 # ==========================================
@@ -259,16 +334,59 @@ if st.button("🚀 Build Interview Knowledge Base"):
 
 
 # ==========================================
-# INTERVIEW SECTION
+# MOCK INTERVIEW SECTION
 # ==========================================
 
-st.header("💬 Mock Interview")
+st.header("💬 AI Mock Interview")
 
-user_question = st.text_input(
-    "Ask or Answer Interview Questions"
-)
+# START INTERVIEW BUTTON
 
+if st.button("🎤 Start Interview"):
 
+    if st.session_state.vectorstore is None:
+
+        st.warning("Please build knowledge base first")
+        st.stop()
+
+    question = generate_interview_question()
+
+    st.session_state.current_question = question
+    st.session_state.interview_started = True
+
+# DISPLAY CURRENT QUESTION
+
+if st.session_state.interview_started:
+
+    st.subheader("🧠 Interview Question")
+
+    st.info(st.session_state.current_question)
+
+    user_answer = st.text_area(
+        "Your Answer"
+    )
+
+    if st.button("Submit Answer"):
+
+        with st.spinner("Evaluating Answer..."):
+
+            evaluation = evaluate_answer(
+                st.session_state.current_question,
+                user_answer
+            )
+
+            st.markdown("## 📊 Evaluation")
+
+            st.markdown(evaluation)
+
+            # Generate next question
+
+            next_question = generate_interview_question()
+
+            st.session_state.current_question = next_question
+
+            st.markdown("## 🎯 Next Question")
+
+            st.info(next_question)
 # ==========================================
 # DISPLAY CHAT HISTORY
 # ==========================================
@@ -284,105 +402,3 @@ for msg in st.session_state.messages:
 # QUERY HANDLING
 # ==========================================
 
-if user_question:
-
-    if st.session_state.qa_chain is None:
-
-        st.warning("Please build knowledge base first")
-        st.stop()
-
-    st.session_state.messages.append(
-        {
-            "role": "user",
-            "content": user_question
-        }
-    )
-
-    with st.chat_message("user"):
-
-        st.markdown(user_question)
-
-    with st.chat_message("assistant"):
-
-        with st.spinner("Thinking..."):
-
-            start_time = time.time()
-
-            result = st.session_state.qa_chain(
-                {
-                    "query": user_question
-                }
-            )
-
-            end_time = time.time()
-
-            answer = result["result"]
-
-            source_docs = result["source_documents"]
-
-            retrieval_latency = round(end_time - start_time, 2)
-
-            # ==================================
-            # INTERVIEW SCORING
-            # ==================================
-
-            score_increment = min(len(user_question.split()) // 5, 10)
-
-            st.session_state.score += score_increment
-
-            st.session_state.question_count += 1
-
-            average_score = round(
-                st.session_state.score /
-                st.session_state.question_count,
-                2
-            )
-
-            st.markdown(answer)
-
-            st.success(f"🎯 Interview Score: {average_score}/10")
-
-            # ==================================
-            # SOURCE CITATIONS
-            # ==================================
-
-            st.subheader("📚 Source Citations")
-
-            for i, doc in enumerate(source_docs):
-
-                source = doc.metadata.get("source", "Unknown")
-
-                page = doc.metadata.get("page", "N/A")
-
-                st.markdown(f"""
-### Source {i+1}
-
-- File: {source}
-- Page: {page}
-""")
-
-                with st.expander(f"View Retrieved Chunk {i+1}"):
-
-                    st.write(doc.page_content)
-
-            # ==================================
-            # RETRIEVAL LATENCY
-            # ==================================
-
-            st.info(
-                f"⏱ Retrieval Latency: {retrieval_latency} seconds"
-            )
-
-    st.session_state.messages.append(
-        {
-            "role": "assistant",
-            "content": answer
-        }
-    )
-
-
-# ==========================================
-# FEATURES SECTION
-# ==========================================
-
-st.divider()
