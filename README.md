@@ -245,7 +245,6 @@ are generated.
 #  Key Functionalities
 
 | Feature |
-|---|---|
 | Resume Parsing |
 | RAG Pipeline |
 | FAISS Vector DB |
