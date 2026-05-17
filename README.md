@@ -241,7 +241,7 @@ At the end of the interview:
 are generated.
 
 ---
-
+![image alt](https://github.com/chandrasiribezawada-blip/interview/blob/76c10c1172606ab5e047a11d97a913a57624695d/Screenshot%202026-05-17%20095849.png)
 #  Key Functionalities
 
 | Feature |
