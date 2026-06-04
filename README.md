@@ -1,122 +1,488 @@
-#  InterviewMentor AI
+# 🎯 InterviewMentor AI
 
-An AI-powered multi-round mock interview assistant built using Retrieval-Augmented Generation (RAG), LangChain, FAISS Vector Database, HuggingFace Embeddings, and Groq LLMs.
+An AI-powered multi-round mock interview platform built using **Retrieval-Augmented Generation (RAG)**, **LangChain**, **FAISS Vector Database**, **HuggingFace Embeddings**, and **Groq LLMs**.
 
-The system conducts realistic AI interviews by analyzing uploaded resumes and dynamically generating interview questions with conversational memory and evaluation feedback.
+InterviewMentor AI analyzes uploaded resumes, understands candidate skills and projects, generates personalized interview questions, evaluates answers in real time, maintains conversational memory, and produces a comprehensive interview performance report.
 
 ---
 
-#  Features
+# 🚀 Features
 
-##  AI-Powered Mock Interviews
-- Conducts realistic mock interviews
-- Supports multiple interview rounds
-- Dynamic question generation
+## ✅ AI-Powered Mock Interviews
+- Conducts realistic industry-style interviews
+- Automatically generates questions
+- Personalized based on resume content
+- Supports adaptive questioning
 
-##  Multi-Round Interview Support
-Supports:
-- HR Round
+## ✅ Multi-Round Interview Support
+
+Available Interview Modes:
+
 - Technical Round
-- System Design Round
+- HR Round
 - Behavioral Round
+- System Design Round
 - Aptitude Round
 
-##  Resume Understanding
-The system analyzes uploaded resumes and extracts:
+---
+
+## ✅ Resume Understanding Engine
+
+The system automatically analyzes uploaded resumes and identifies:
+
+- Academic Background
 - Skills
-- Projects
 - Technologies
-- Education
+- Projects
+- Certifications
 - Experience Level
 
-##  RAG (Retrieval-Augmented Generation)
-Uses:
-- Document chunking
-- Embedding generation
-- FAISS vector search
-- MMR retrieval
+This enables personalized interview generation.
 
-to generate highly contextual interview questions.
+---
 
-##  Conversational Memory
-Maintains previous:
-- Questions
+## ✅ Retrieval-Augmented Generation (RAG)
+
+The application uses a complete RAG pipeline:
+
+- PDF Parsing
+- Text Chunking
+- Embedding Generation
+- Vector Storage
+- Semantic Retrieval
+- Context-Aware Question Generation
+
+This ensures interview questions are grounded in the candidate's resume.
+
+---
+
+## ✅ Conversational Memory
+
+Maintains:
+
+- Previous Questions
 - Candidate Answers
-- Interview Flow
+- Evaluation History
+- Interview Progress
 
-to generate intelligent follow-up questions.
+Enables intelligent follow-up questioning.
 
-##  AI Evaluation System
-Evaluates candidate answers based on:
+---
+
+## ✅ AI-Based Candidate Evaluation
+
+Each answer is evaluated based on:
+
 - Technical Accuracy
+- Communication Skills
 - Clarity
-- Communication
 - Confidence
-- Depth of Explanation
+- Depth of Understanding
 
-##  Final Interview Report
 Provides:
-- Overall Score
+
+- Score (/10)
 - Strengths
 - Weaknesses
 - Improvement Suggestions
 
-##  Persistent FAISS Database
-Stores vector database locally for faster reuse.
+---
 
-##  Duplicate PDF Handling
-Prevents duplicate document indexing.
+## ✅ Dynamic Follow-Up Questions
 
-##  Corrupted PDF Handling
-Gracefully handles invalid or corrupted PDFs.
+Unlike traditional interview bots, InterviewMentor AI:
+
+- Remembers previous responses
+- Avoids repeated questions
+- Generates contextual follow-ups
+
+Creating a realistic interview experience.
 
 ---
 
-#  Tech Stack
+## ✅ Interview History Tracking
+
+Stores:
+
+- Questions Asked
+- Candidate Answers
+- AI Evaluations
+- Individual Scores
+
+Allows candidates to review their complete interview session.
+
+---
+
+## ✅ Final Interview Report
+
+At the end of the interview:
+
+- Average Score
+- Performance Analysis
+- Strengths
+- Weaknesses
+- Areas for Improvement
+
+are automatically generated.
+
+---
+
+## ✅ Persistent Vector Database
+
+Uses FAISS persistence:
+
+- Build once
+- Reuse embeddings
+- Faster startup
+- Reduced processing time
+
+---
+
+## ✅ Duplicate Document Detection
+
+Prevents:
+
+- Duplicate resume uploads
+- Duplicate vector indexing
+- Redundant embeddings
+
+---
+
+## ✅ Corrupted PDF Handling
+
+Gracefully handles:
+
+- Invalid PDFs
+- Empty PDFs
+- Unsupported documents
+
+without crashing the application.
+
+---
+
+# 🏗️ Technology Stack
 
 | Technology | Purpose |
-|---|---|
+|------------|----------|
 | Streamlit | Frontend UI |
-| LangChain | RAG Pipeline |
+| Python | Backend Logic |
+| LangChain | RAG Framework |
 | FAISS | Vector Database |
-| HuggingFace Embeddings | Text Embeddings |
-| Groq LLM | Large Language Model |
+| HuggingFace Embeddings | Semantic Embeddings |
+| Groq Llama 3.3 70B | Large Language Model |
 | PyPDFLoader | PDF Processing |
-| Python | Backend |
+| RecursiveCharacterTextSplitter | Chunking |
+| ConversationBufferMemory | Conversation Memory |
+| dotenv | Environment Management |
 
 ---
 
-#  Architecture
+# 🧠 AI & RAG Architecture
+
+## Embedding Model
 
 ```text
-User Uploads Resume
-        ↓
-PDF Processing
-        ↓
-Text Chunking
-        ↓
-Embedding Generation
-        ↓
-FAISS Vector Storage
-        ↓
-MMR Retrieval
-        ↓
-Resume Understanding
-        ↓
-AI Interview Question Generation
-        ↓
-Candidate Answer Evaluation
-        ↓
-Conversation Memory
-        ↓
-Dynamic Follow-Up Questions
-        ↓
-Final Interview Report
+sentence-transformers/all-MiniLM-L6-v2
+```
+
+Used for:
+
+- Semantic Search
+- Similarity Matching
+- Resume Understanding
+
+---
+
+## Chunking Strategy
+
+```text
+RecursiveCharacterTextSplitter
+```
+
+Parameters:
+
+```python
+chunk_size = 1000
+chunk_overlap = 200
+```
+
+Benefits:
+
+- Preserves context
+- Reduces information loss
+- Improves retrieval quality
+
+---
+
+## Vector Database
+
+```text
+FAISS (Facebook AI Similarity Search)
+```
+
+Used for:
+
+- Fast similarity search
+- Resume retrieval
+- Context retrieval
+
+---
+
+## Retrieval Strategy
+
+```text
+MMR (Max Marginal Relevance)
+```
+
+Configuration:
+
+```python
+search_type="mmr"
+
+k=4
+fetch_k=20
+lambda_mult=0.7
+```
+
+Benefits:
+
+- Reduces duplicate chunks
+- Improves diversity
+- Better context retrieval
+
+---
+
+# 📊 System Architecture
+
+```text
++----------------------------------------------------+
+|                 User Upload Resume                 |
++----------------------------------------------------+
+                        |
+                        v
++----------------------------------------------------+
+|                 PDF Processing Layer               |
+|                  (PyPDFLoader)                     |
++----------------------------------------------------+
+                        |
+                        v
++----------------------------------------------------+
+|                 Text Chunking Layer                |
+|      RecursiveCharacterTextSplitter                |
++----------------------------------------------------+
+                        |
+                        v
++----------------------------------------------------+
+|              HuggingFace Embeddings                |
+|          all-MiniLM-L6-v2 Model                    |
++----------------------------------------------------+
+                        |
+                        v
++----------------------------------------------------+
+|                  FAISS Vector DB                   |
++----------------------------------------------------+
+                        |
+                        v
++----------------------------------------------------+
+|              MMR Semantic Retrieval                |
++----------------------------------------------------+
+                        |
+                        v
++----------------------------------------------------+
+|               Resume Understanding                 |
++----------------------------------------------------+
+                        |
+                        v
++----------------------------------------------------+
+|          Groq Llama-3.3-70B Question Engine        |
++----------------------------------------------------+
+                        |
+                        v
++----------------------------------------------------+
+|             Candidate Answer Evaluation            |
++----------------------------------------------------+
+                        |
+                        v
++----------------------------------------------------+
+|              Conversation Memory Layer             |
++----------------------------------------------------+
+                        |
+                        v
++----------------------------------------------------+
+|             Final Interview Report                 |
++----------------------------------------------------+
 ```
 
 ---
 
-#  Project Structure
+# 🔄 Workflow Diagram
+
+```text
++---------------------+
+| Upload Resume PDFs  |
++----------+----------+
+           |
+           v
++---------------------+
+| Process Documents   |
++----------+----------+
+           |
+           v
++---------------------+
+| Create Chunks       |
++----------+----------+
+           |
+           v
++---------------------+
+| Generate Embeddings |
++----------+----------+
+           |
+           v
++---------------------+
+| Store in FAISS DB   |
++----------+----------+
+           |
+           v
++---------------------+
+| Start Interview     |
++----------+----------+
+           |
+           v
++---------------------+
+| Generate Question   |
++----------+----------+
+           |
+           v
++---------------------+
+| Candidate Answers   |
++----------+----------+
+           |
+           v
++---------------------+
+| AI Evaluation       |
++----------+----------+
+           |
+           v
++---------------------+
+| Follow-up Question  |
++----------+----------+
+           |
+           v
++---------------------+
+| Final Report        |
++---------------------+
+```
+
+---
+
+# 👤 Use Case Diagram
+
+```text
+                 +------------------+
+                 |    Candidate     |
+                 +---------+--------+
+                           |
+      +--------------------+------------------+
+      |                    |                  |
+      v                    v                  v
+
++-------------+    +---------------+   +---------------+
+| Upload PDF  |    | Start         |   | View Final    |
+| Resume      |    | Interview     |   | Report        |
++-------------+    +---------------+   +---------------+
+
+                           |
+                           v
+
+                +----------------------+
+                | InterviewMentor AI   |
+                +----------------------+
+
+                           |
+          +----------------+----------------+
+          |                |                |
+          v                v                v
+
++----------------+ +----------------+ +----------------+
+| Generate       | | Evaluate       | | Generate       |
+| Questions      | | Answers        | | Feedback       |
++----------------+ +----------------+ +----------------+
+```
+
+---
+
+# 🔁 Sequence Diagram
+
+```text
+Candidate        Streamlit       FAISS       Groq LLM
+
+    |                |             |            |
+    | Upload PDF     |             |            |
+    |--------------->|             |            |
+    |                | Store Docs  |            |
+    |                |-----------> |            |
+    |                |             |            |
+    | Start Interview|             |            |
+    |--------------->|             |            |
+    |                | Retrieve    |            |
+    |                |-----------> |            |
+    |                |             |            |
+    |                | Context     |            |
+    |                |<----------- |            |
+    |                |             |            |
+    |                | Generate Qn |----------> |
+    |                |             |            |
+    |                | Question    |<---------- |
+    |<---------------|             |            |
+    |                |             |            |
+    | Answer         |             |            |
+    |--------------->|             |            |
+    |                | Evaluate    |----------> |
+    |                |             |            |
+    |                | Feedback    |<---------- |
+    |<---------------|             |            |
+```
+
+---
+
+# 🚀 Deployment Diagram
+
+```text
++----------------------+
+|      End User        |
++----------+-----------+
+           |
+           v
++----------------------+
+|      Streamlit UI    |
++----------+-----------+
+           |
+           v
++----------------------+
+| InterviewMentor AI   |
+|   Application Layer  |
++----------+-----------+
+           |
+           |
+   +-------+-------+
+   |               |
+   v               v
+
++-----------+   +-----------+
+| FAISS DB  |   | Groq LLM  |
++-----------+   +-----------+
+
+           |
+           v
+
++----------------------+
+| Resume Knowledge Base|
++----------------------+
+```
+
+---
+
+# 📂 Project Structure
 
 ```text
 InterviewMentorAI/
@@ -125,41 +491,42 @@ InterviewMentorAI/
 ├── .env
 ├── requirements.txt
 ├── faiss_index/
-└── README.md
+├── README.md
+│
+└── uploads/
 ```
 
 ---
 
-#  Installation
+# ⚙️ Installation
 
-## 1️ Clone Repository
+## Clone Repository
 
 ```bash
-git clone <your-github-repo-link>
+git clone https://github.com/your-username/InterviewMentorAI.git
+
 cd InterviewMentorAI
 ```
 
----
+## Create Virtual Environment
 
-## 2️ Create Virtual Environment
+```bash
+python -m venv venv
+```
 
 ### Windows
 
 ```bash
-python -m venv venv
-venv\\Scripts\\activate
+venv\Scripts\activate
 ```
 
 ### Linux/Mac
 
 ```bash
-python3 -m venv venv
 source venv/bin/activate
 ```
 
----
-
-## 3️ Install Dependencies
+## Install Dependencies
 
 ```bash
 pip install -r requirements.txt
@@ -167,26 +534,9 @@ pip install -r requirements.txt
 
 ---
 
-#  Required Libraries
+# 🔑 Environment Variables
 
-```bash
-pip install streamlit
-pip install langchain
-pip install langchain-community
-pip install langchain-huggingface
-pip install langchain-groq
-pip install langchain-text-splitters
-pip install sentence-transformers
-pip install faiss-cpu
-pip install pypdf
-pip install python-dotenv
-```
-
----
-
-#  Environment Variables
-
-Create a `.env` file in the project root.
+Create a `.env` file
 
 ```env
 GROQ_API_KEY=your_groq_api_key
@@ -194,7 +544,7 @@ GROQ_API_KEY=your_groq_api_key
 
 ---
 
-#  Run Application
+# ▶️ Run Application
 
 ```bash
 streamlit run app.py
@@ -202,81 +552,29 @@ streamlit run app.py
 
 ---
 
-#  How It Works
+# 🎯 Future Enhancements
 
-## Step 1 — Upload Resume
-Upload one or multiple PDF resumes/documents.
-
-## Step 2 — Build Knowledge Base
-The system:
-- extracts text
-- chunks documents
-- creates embeddings
-- stores vectors in FAISS
-
-## Step 3 — Resume Analysis
-The AI analyzes:
-- skills
-- education
-- projects
-- technologies
-
-## Step 4 — AI Interview Starts
-The interviewer dynamically asks:
-- technical questions
-- HR questions
-- follow-up questions
-
-based on the resume and conversation history.
-
-## Step 5 — AI Evaluation
-Candidate answers are evaluated in real time.
-
-## Step 6 — Final Report
-At the end of the interview:
-- overall score
-- performance feedback
-- improvement suggestions
-
-are generated.
-
----
-![image alt](https://github.com/chandrasiribezawada-blip/interview/blob/76c10c1172606ab5e047a11d97a913a57624695d/Screenshot%202026-05-17%20095849.png)
-#  Key Functionalities
-
-| Feature |
-| Resume Parsing |
-| RAG Pipeline |
-| FAISS Vector DB |
-| MMR Retrieval | 
-| Conversational Memory | 
-| Follow-Up Questions |
-| AI Evaluation | 
-| Persistent Vector DB |
-| Duplicate File Detection | 
-| Error Handling | 
+- Voice-Based Interviews
+- Real-Time Speech Analysis
+- Facial Emotion Detection
+- Interview Analytics Dashboard
+- Cloud Deployment
+- Multi-User Authentication
+- Interview Recording
+- PDF Report Export
 
 ---
 
-#  Interviewer Explanation
+# 👩‍💻 Author
 
-> “InterviewMentor AI is an industry-style AI mock interview platform developed using Retrieval-Augmented Generation (RAG). The application processes resumes using LangChain and FAISS vector search, generates contextual interview questions using Groq LLMs, maintains conversational memory for follow-up questioning, and evaluates candidate answers dynamically with structured feedback and scoring.”
+**Varshini Bezawada**
 
----
+B.Tech Information Technology
 
-#  Future Improvements
-
-- Voice-based interviews
-- Real-time speech evaluation
-- Facial emotion analysis
-- Code editor integration
-- Multi-user authentication
-- Cloud deployment
-- Analytics dashboard
-- Interview performance tracking
+AI • RAG • LLM Applications • Generative AI
 
 ---
 
-#  Author
+# 📜 License
 
-Developed as an AI-powered interview preparation system using modern LLM and RAG technologies.
+This project is licensed under the MIT License.
